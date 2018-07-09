@@ -29,21 +29,21 @@ app.logger.setLevel(logging.DEBUG)
 from flask_bootstrap import Bootstrap
 Bootstrap(app)
 
-gifProvider = {
-    "name" : "http://localhost:8080/gifImage",
-    "endpoint" : "gifProvider",
+poemprovider = {
+    "name" : "http://localhost:8080",
+    "endpoint" : "poem",
     "children" : []
 }
 
-gifPage = {
+poempage = {
     "name" : "http://localhost:9080",
-    "endpoint" : "gifPage",
-    "children" : [gifProvider]
+    "endpoint" : "poetrypage",
+    "children" : [poemprovider]
 }
 
 service_dict = {
-    "gifPage" : gifPage,
-    "gifProvider" : gifProvider,
+    "poempage" : poempage,
+    "poemprovider" : poemprovider,
 }
 
 def getForwardHeaders(request):
@@ -112,7 +112,8 @@ def front():
     #product = getProduct(product_id)
     #detailsStatus, details = getProductDetails(product_id, headers)
     #reviewsStatus, reviews = getProductReviews(product_id, headers)
-    poem = getPoem(poet_id)
+    #poem = getPoem(poet_id)
+    poem = getPoemTxt(poem_id, headers)
     return render_template(
         'poetrypage.html',
         poem=poem)
@@ -180,6 +181,18 @@ def getProduct(product_id):
         return None
     else:
         return products[product_id]
+
+def getPoemsTxt(poem_id, headers):
+    try:
+        url = poemprovider['name'] + "/" + poemprovider['endpoint'] + "/" + str(product_id)
+        res = requests.get(url, headers=headers, timeout=3.0)
+    except:
+        res = None
+    if res and res.status_code == 200:
+        return 200, res.json()
+    else:
+        status = res.status_code if res is not None and res.status_code else 500
+        return status, {'error': 'Sorry, product details are currently unavailable for this book.'}
 
 
 def getProductDetails(product_id, headers):

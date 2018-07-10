@@ -35,14 +35,21 @@ poemprovider = {
     "children" : []
 }
 
+poetbio = {
+    "name" : "http://localhost:8888",
+    "endpoint" : "poetbio",
+    "children" : []
+}
+
 poempage = {
     "name" : "http://localhost:9080",
     "endpoint" : "poetrypage",
-    "children" : [poemprovider]
+    "children" : [poetbio, poemprovider]
 }
 
 service_dict = {
     "poempage" : poempage,
+    "poetbio" : poetbio,
     "poemprovider" : poemprovider,
 }
 
@@ -114,11 +121,27 @@ def front():
     #reviewsStatus, reviews = getProductReviews(product_id, headers)
     #poem = getPoem(poet_id)
     poemStatus, poem = getPoemTxt(poem_id, headers)
+    poetbioStatus, bio = getPoetBiography(poem_id, headers)
     return render_template(
         'poetrypage.html',
+        poetbioStatus=poetbioStatus,
+        bio=bio,
         poemStatus=poemStatus,
         poem=poem)
 
+def getPoetBiography(poem_id, headers):
+    try:
+        url = poetbio['name'] + "/" + poetbio['endpoint']
+        print(url)
+        res = requests.get(url, headers=headers, timeout=3.0)    
+        print(res.json())    
+    except:
+        res = None
+    if res and res.status_code == 200:
+        return 200, res.json()
+    else:
+        status = res.status_code if res is not None and res.status_code else 500
+        return status, {'error': 'Sorry, poet biography are currently unavailable.'}
 
 def getPoemTxt(poem_id, headers):
     try:
@@ -133,8 +156,6 @@ def getPoemTxt(poem_id, headers):
     else:
         status = res.status_code if res is not None and res.status_code else 500
         return status, {'error': 'Sorry, poems are currently unavailable.'}
-
-
 
 # The API:
 @app.route('/api/v1/products')

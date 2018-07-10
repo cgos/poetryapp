@@ -106,16 +106,17 @@ def logout():
 
 @app.route('/poetrypage')
 def front():
-    poet_id = 0 # TODO: replace default value
+    poem_id = 0 # TODO: replace default value
     headers = getForwardHeaders(request)
     user = request.cookies.get("user", "")
     #product = getProduct(product_id)
     #detailsStatus, details = getProductDetails(product_id, headers)
     #reviewsStatus, reviews = getProductReviews(product_id, headers)
     #poem = getPoem(poet_id)
-    poem = getPoemTxt(poem_id, headers)
+    poemStatus, poem = getPoemTxt(poem_id, headers)
     return render_template(
         'poetrypage.html',
+        poemStatus=poemStatus,
         poem=poem)
 
 
@@ -182,9 +183,9 @@ def getProduct(product_id):
     else:
         return products[product_id]
 
-def getPoemsTxt(poem_id, headers):
+def getPoemTxt(poem_id, headers):
     try:
-        url = poemprovider['name'] + "/" + poemprovider['endpoint'] + "/" + str(product_id)
+        url = poemprovider['name'] + "/" + poemprovider['endpoint']
         res = requests.get(url, headers=headers, timeout=3.0)
     except:
         res = None
@@ -192,12 +193,13 @@ def getPoemsTxt(poem_id, headers):
         return 200, res.json()
     else:
         status = res.status_code if res is not None and res.status_code else 500
-        return status, {'error': 'Sorry, product details are currently unavailable for this book.'}
+        return status, {'error': 'Sorry, poems are currently unavailable.'}
 
 
 def getProductDetails(product_id, headers):
     try:
-        url = details['name'] + "/" + details['endpoint'] + "/" + str(product_id)
+        #url = details['name'] + "/" + details['endpoint'] + "/" + str(product_id)
+        url = details['name'] + "/" + details['endpoint']
         res = requests.get(url, headers=headers, timeout=3.0)
     except:
         res = None
@@ -243,10 +245,10 @@ if __name__ == '__main__':
 
     p = int(sys.argv[1])
     print ("start at port %s" %(p))    
-    fileError = open("stderr.log", "w" )
-    sys.stderr = fileError
+    #fileError = open("stderr.log", "w" )
+    #sys.stderr = fileError
 
-    fileOutput = open("stdout.log", "w")
-    sys.stdout = fileOutput
+    #fileOutput = open("stdout.log", "w")
+    #sys.stdout = fileOutput
 
     app.run(host='0.0.0.0', port=p, debug=True, threaded=True)

@@ -120,6 +120,22 @@ def front():
         poem=poem)
 
 
+def getPoemTxt(poem_id, headers):
+    try:
+        url = poemprovider['name'] + "/" + poemprovider['endpoint']
+        print(url)
+        res = requests.get(url, headers=headers, timeout=3.0)    
+        print(res.json())    
+    except:
+        res = None
+    if res and res.status_code == 200:
+        return 200, res.json()
+    else:
+        status = res.status_code if res is not None and res.status_code else 500
+        return status, {'error': 'Sorry, poems are currently unavailable.'}
+
+
+
 # The API:
 @app.route('/api/v1/products')
 def productsRoute():
@@ -182,18 +198,6 @@ def getProduct(product_id):
         return None
     else:
         return products[product_id]
-
-def getPoemTxt(poem_id, headers):
-    try:
-        url = poemprovider['name'] + "/" + poemprovider['endpoint']
-        res = requests.get(url, headers=headers, timeout=3.0)
-    except:
-        res = None
-    if res and res.status_code == 200:
-        return 200, res.json()
-    else:
-        status = res.status_code if res is not None and res.status_code else 500
-        return status, {'error': 'Sorry, poems are currently unavailable.'}
 
 
 def getProductDetails(product_id, headers):

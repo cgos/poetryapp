@@ -70,8 +70,9 @@ $('#login-modal').on('shown.bs.modal', function () {
   <div class="row">
     <div class="col-md-12">
       <h3 class="text-center text-primary">{{ poem.title }}</h3>
+      <h4 class="text-center">{{ poem.author }}</h3>
       {% autoescape false %}
-      <p class="text-center">{{poem.txt}}</p>
+      <p class="text-center">{{poem.poem}}</p>
 
       {% endautoescape %}
     </div>

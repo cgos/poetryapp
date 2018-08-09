@@ -19,41 +19,29 @@ except ImportError:
 http_client.HTTPConnection.debuglevel = 1
 
 app = Flask(__name__)
-logging.basicConfig(filename='microservice.log',filemode='w',level=logging.DEBUG)
+# logging.basicConfig(filename='microservice.log',filemode='w',level=logging.DEBUG)
 requests_log = logging.getLogger("requests.packages.urllib3")
 requests_log.setLevel(logging.DEBUG)
 requests_log.propagate = True
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.DEBUG)
+urlPoemProvider = "http://172.17.0.3:8181"
+urlPoetBio = "http://172.17.0.2:8888"
 
 from flask_bootstrap import Bootstrap
 Bootstrap(app)
 
-poemprovider = {
-    "name" : "http://localhost:8080",
-    "endpoint" : "poem",
-    "children" : []
-}
+poetbio = None
 
-poetbio = {
-    "name" : "http://localhost:8888",
-    "endpoint" : "poetbio",
-    "children" : []
-}
+poemprovider = None
 
-poempage = {
-    "name" : "http://localhost:9080",
-    "endpoint" : "poetrypage",
-    "children" : [poetbio, poemprovider]
-}
+poempage = None
 
-service_dict = {
-    "poempage" : poempage,
-    "poetbio" : poetbio,
-    "poemprovider" : poemprovider,
-}
+service_dict = None
+
 
 def getForwardHeaders(request):
+    print ("getForwardHeaders")
     headers = {}
 
     user_cookie = request.cookies.get("user")
@@ -82,6 +70,7 @@ def getForwardHeaders(request):
 @app.route('/')
 @app.route('/index.html')
 def index():
+    print ("index")
     """ Display gifPage"""
     global gifPage
 
@@ -113,15 +102,20 @@ def logout():
 
 @app.route('/poetrypage')
 def front():
+    print ("poetrypage")
     poem_id = 0 # TODO: replace default value
     headers = getForwardHeaders(request)
     user = request.cookies.get("user", "")
+    
     #product = getProduct(product_id)
     #detailsStatus, details = getProductDetails(product_id, headers)
     #reviewsStatus, reviews = getProductReviews(product_id, headers)
     #poem = getPoem(poet_id)
-    poemStatus, poem = getPoemTxt(poem_id, headers)
+    
     poetbioStatus, bio = getPoetBiography(poem_id, headers)
+    
+    poemStatus, poem = getPoemTxt(poem_id, headers)
+
     return render_template(
         'poetrypage.html',
         poetbioStatus=poetbioStatus,
@@ -130,6 +124,7 @@ def front():
         poem=poem)
 
 def getPoetBiography(poem_id, headers):
+    print ("getPoetBiography")
     try:
         url = poetbio['name'] + "/" + poetbio['endpoint']
         print(url)
@@ -144,6 +139,7 @@ def getPoetBiography(poem_id, headers):
         return status, {'error': 'Sorry, poet biography are currently unavailable.'}
 
 def getPoemTxt(poem_id, headers):
+    print ("getPoemTxt")
     try:
         url = poemprovider['name'] + "/" + poemprovider['endpoint']
         print(url)
@@ -158,44 +154,22 @@ def getPoemTxt(poem_id, headers):
         return status, {'error': 'Sorry, poems are currently unavailable.'}
 
 # The API:
-@app.route('/api/v1/products')
-def productsRoute():
-    return json.dumps(getProducts()), 200, {'Content-Type': 'application/json'}
+# @app.route('/api/v1/products')
+# def productsRoute():
+#     return json.dumps(getProducts()), 200, {'Content-Type': 'application/json'}
 
 
-@app.route('/api/v1/products/<product_id>')
-def productRoute(product_id):
-    headers = getForwardHeaders(request)
-    status, details = getProductDetails(product_id, headers)
-    return json.dumps(details), status, {'Content-Type': 'application/json'}
-
-
-@app.route('/api/v1/products/<product_id>/reviews')
-def reviewsRoute(product_id):
-    headers = getForwardHeaders(request)
-    status, reviews = getProductReviews(product_id, headers)
-    return json.dumps(reviews), status, {'Content-Type': 'application/json'}
-
-
-@app.route('/api/v1/products/<product_id>/ratings')
-def ratingsRoute(product_id):
-    headers = getForwardHeaders(request)
-    status, ratings = getProductRatings(product_id, headers)
-    return json.dumps(ratings), status, {'Content-Type': 'application/json'}
+# @app.route('/api/v1/products/<product_id>')
+# def productRoute(product_id):
+#     headers = getForwardHeaders(request)
+#     status, details = getProductDetails(product_id, headers)
+#     return json.dumps(details), status, {'Content-Type': 'application/json'}
 
 
 
-# Data providers:
-def getProducts():
-    return [
-        {
-            'id': 0,
-            'title': 'The Comedy of Errors',
-            'descriptionHtml': '<a href="https://en.wikipedia.org/wiki/The_Comedy_of_Errors">Wikipedia Summary</a>: The Comedy of Errors is one of <b>William Shakespeare\'s</b> early plays. It is his shortest and one of his most farcical comedies, with a major part of the humour coming from slapstick and mistaken identity, in addition to puns and word play.'
-        }
-    ]
 
 def getPoems():
+    print ("getPoems")
     return [
             {
                 'id': 0,
@@ -207,69 +181,51 @@ def getPoems():
 
 
 def getPoem(poem_id):
+    print ("getPoem")
     poems = getPoems()
     if poem_id + 1 > len(poems):
         return None
     else:
         return poems[poem_id]
 
-def getProduct(product_id):
-    products = getProducts()
-    if product_id + 1 > len(products):
-        return None
+
+if __name__ == '__main__':    
+    if len(sys.argv) < 4:
+        print ("usage: %s port urlPoemProvider urlPoetBio" % (sys.argv[0]))
+        p = int(8080)
     else:
-        return products[product_id]
+        p = int(sys.argv[1])        
+        urlPoemProvider = sys.argv[2]        
+        urlPoetBio = sys.argv[3]
 
 
-def getProductDetails(product_id, headers):
-    try:
-        #url = details['name'] + "/" + details['endpoint'] + "/" + str(product_id)
-        url = details['name'] + "/" + details['endpoint']
-        res = requests.get(url, headers=headers, timeout=3.0)
-    except:
-        res = None
-    if res and res.status_code == 200:
-        return 200, res.json()
-    else:
-        status = res.status_code if res is not None and res.status_code else 500
-        return status, {'error': 'Sorry, product details are currently unavailable for this book.'}
+    poetbio = {
+        "name" : urlPoetBio,
+        "endpoint" : "poetbio",
+        "children" : []
+    }
+
+    poemprovider = {
+        "name" : urlPoemProvider,
+        "endpoint" : "poem",
+        "children" : []
+    }
+
+    poempage = {
+        "name" : "http://localhost:9080",
+        "endpoint" : "poetrypage",
+        "children" : [poetbio, poemprovider]
+    }
 
 
-def getProductReviews(product_id, headers):
-    ## Do not remove. Bug introduced explicitly for illustration in fault injection task
-    ## TODO: Figure out how to achieve the same effect using Envoy retries/timeouts
-    for _ in range(2):
-        try:
-            url = reviews['name'] + "/" + reviews['endpoint'] + "/" + str(product_id)
-            res = requests.get(url, headers=headers, timeout=3.0)
-        except:
-            res = None
-        if res and res.status_code == 200:
-            return 200, res.json()
-    status = res.status_code if res is not None and res.status_code else 500
-    return status, {'error': 'Sorry, product reviews are currently unavailable for this book.'}
+    service_dict = {
+        "poempage" : poempage,
+        "poetbio" : poetbio,
+        "poemprovider" : poemprovider,
+    }
 
 
-def getProductRatings(product_id, headers):
-    try:
-        url = ratings['name'] + "/" + ratings['endpoint'] + "/" + str(product_id)
-        res = requests.get(url, headers=headers, timeout=3.0)
-    except:
-        res = None
-    if res and res.status_code == 200:
-        return 200, res.json()
-    else:
-        status = res.status_code if res is not None and res.status_code else 500
-        return status, {'error': 'Sorry, product ratings are currently unavailable for this book.'}
-
-
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print ("usage: %s port" % (sys.argv[0]))
-        sys.exit(-1)
-
-    p = int(sys.argv[1])
-    print ("start at port %s" %(p))    
+    print ("start at port %s %s %s" %(p, urlPoemProvider, urlPoetBio))
     #fileError = open("stderr.log", "w" )
     #sys.stderr = fileError
 

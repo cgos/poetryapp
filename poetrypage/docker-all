@@ -1,0 +1,6 @@
+docker kill poetrypage
+docker rm poetrypage
+docker build -f Dockerfile -t cgos/poetrypage ./
+docker push cgos/poetrypage
+docker pull cgos/poetrypage
+docker run -d -p 80:8080 --name poetrypage cgos/poetrypage http://172.17.0.3:8080 http://172.17.0.2:8888

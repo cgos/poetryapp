@@ -1,0 +1,6 @@
+docker kill poemprovider
+docker rm poemprovider
+docker build -f Dockerfile -t cgos/poemprovider ./
+docker push cgos/poemprovider
+docker pull cgos/poemprovider
+docker run -d -p 8080:8181 --name poemprovider cgos/poemprovider

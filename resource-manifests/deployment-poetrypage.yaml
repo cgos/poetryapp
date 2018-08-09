@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: poetrypage-deployment-name
+spec:
+  replicas: 2
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: 
+      maxUnavailable: 1
+      maxSurge: 1 
+  template:
+    metadata:
+      labels:
+        app: poetrypage-label
+    spec:
+      containers:
+        - image: cgos/poetrypage
+          imagePullPolicy: Always
+          name: poetrypage
+          ports:
+            - containerPort: 80

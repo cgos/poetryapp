@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: poetrypage-pod-name
+  labels:
+    app: poetrypage-label
+spec:
+  containers:
+    - image: cgos/poetrypage
+      name: poetrypage
+      ports:
+        - containerPort: 8080

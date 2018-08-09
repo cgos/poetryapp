@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: poemprovider-deployment-name
+spec:
+  replicas: 2
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: 
+      maxUnavailable: 1
+      maxSurge: 1 
+  template:
+    metadata:
+      labels:
+        app: poemprovider-label
+    spec:
+      containers:
+        - image: cgos/poemprovider
+          imagePullPolicy: Always
+          name: poemprovider
+          ports:
+            - containerPort: 8080

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: poemprovider-pod-name
+  labels:
+    app: poemprovider-label
+spec:
+  containers:
+    - image: cgos/poemprovider
+      name: poemprovider
+      ports:
+        - containerPort: 8080

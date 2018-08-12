@@ -1,0 +1,6 @@
+docker kill poetrywebapp
+docker rm poetrywebapp
+docker build -f Dockerfile -t cgos/poetrywebapp ./
+docker push cgos/poetrywebapp
+docker pull cgos/poetrywebapp
+docker run -d -p 8080:8080 --name poetrywebapp cgos/poetrywebapp

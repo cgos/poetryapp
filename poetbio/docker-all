@@ -1,0 +1,6 @@
+docker kill poetbio
+docker rm poetbio
+docker build -f Dockerfile -t cgos/poetbio ./
+docker push cgos/poetbio
+docker pull cgos/poetbio
+docker run -d -p 8888:8888 --name poetbio cgos/poetbio

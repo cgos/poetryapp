@@ -1,5 +1,7 @@
 # Build
+```
 mvn package
+```
 
 # Run locally
 ```
@@ -9,22 +11,22 @@ java -jar poetrywebapp-0.1.0.jar --poemprovider.api.url=http://127.0.0.1:8181/po
 Test by opening browser to: http://127.0.0.1:8080/poetry
 
 # Creating/Pushing/Running/Stopping the docker image/container 
-* start poetbio and poemprovider docker container
-* find IP for those 2 container with 
-``` console
+## start poetbio and poemprovider docker container
+## find IP for those 2 container with 
+``` 
 docker inspect <container name> | grep "IPAddress"
 ```
 
-* build docker
+## build docker
 ```
 docker build -f Dockerfile -t cgos/
 ```
-* push to repo
+## push to repo
 ```
 docker push cgos/
 ```
 
-* run docker
+## run docker
 ```
 docker run -d -p 8080:8181 $DOCKER_USER_ID/
 ```

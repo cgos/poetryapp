@@ -16,6 +16,6 @@ docker container ls -a
 # Minikube
 Follow minikube documentation for installation
 
-Start minikube: ``` minikube start ``` and validate it's running fine: ``` kubectl get nodes ```
+Start minikube: ``` minikube start --vm-driver docker-machine-driver-hyperkit``` and validate it's running fine: ``` kubectl get nodes ```
 
 

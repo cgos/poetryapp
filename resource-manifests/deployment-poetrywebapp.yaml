@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: poemprovider-deployment-name
+  name: poetrywebapp-deployment-name
 spec:
   replicas: 2
   minReadySeconds: 15
@@ -13,11 +13,11 @@ spec:
   template:
     metadata:
       labels:
-        app: poemprovider-label
+        app: poetrywebapp-label
     spec:
       containers:
-        - image: cgos/poemprovider
+        - image: cgos/poetrywebapp
           imagePullPolicy: Always
-          name: poemprovider
+          name: poetrywebapp
           ports:
-            - containerPort: 8181
+            - containerPort: 8080

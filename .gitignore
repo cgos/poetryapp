@@ -2,10 +2,13 @@
 ###################
 *.com
 *.class
+*.classpath
 *.dll
 *.exe
 *.o
 *.so
+*.class
+*.project
 
 # Packages #
 ############

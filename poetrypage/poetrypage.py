@@ -71,14 +71,16 @@ def getForwardHeaders(request):
 @app.route('/index.html')
 def index():
     print ("index")
-    """ Display gifPage"""
-    global gifPage
+    poem_id = 0 # TODO: replace default value
+    headers = getForwardHeaders(request)
+    user = request.cookies.get("user", "")    
+    
+    poemStatus, poem = getPoemTxt(poem_id, headers)
 
-    table = json2html.convert(json=json.dumps(gifPage),
-                              table_attributes="class=\"table table-condensed table-bordered table-hover\"")
-
-    return render_template('index.html', serviceTable=table)
-
+    return render_template(
+        'index.html',
+        poemStatus=poemStatus,
+        poem=poem)
 
 @app.route('/health')
 def health():
@@ -190,9 +192,12 @@ def getPoem(poem_id):
 
 
 if __name__ == '__main__':    
-    if len(sys.argv) < 4:
+    if len(sys.argv) == 1:
         print ("usage: %s port urlPoemProvider urlPoetBio" % (sys.argv[0]))
-        p = int(8080)
+        p = int(9090)
+    elif len(sys.argv) == 3:
+        p = int(sys.argv[1])        
+        urlPoemProvider = sys.argv[2]        
     else:
         p = int(sys.argv[1])        
         urlPoemProvider = sys.argv[2]        
@@ -207,7 +212,7 @@ if __name__ == '__main__':
 
     poemprovider = {
         "name" : urlPoemProvider,
-        "endpoint" : "poem",
+        "endpoint" : "poetry",
         "children" : []
     }
 

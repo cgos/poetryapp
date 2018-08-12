@@ -14,6 +14,8 @@ docker container ls -a
 ```
 
 # Minikube
+Follow minikube documentation for installation
 
+Start minikube: ``` minikube start ``` and validate it's running fine: ``` kubectl get nodes ```
 
 

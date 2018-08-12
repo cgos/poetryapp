@@ -3,4 +3,4 @@ docker rm poetrypage
 docker build -f Dockerfile -t cgos/poetrypage ./
 docker push cgos/poetrypage
 docker pull cgos/poetrypage
-docker run -d -p 80:9090 --name poetrypage cgos/poetrypage http://127.0.0.1:8080
+docker run -d -p 80:9090 --name poetrypage cgos/poetrypage 9090 http://172.17.0.4:8080

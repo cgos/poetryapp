@@ -10,8 +10,8 @@ java -jar poetrywebapp-0.1.0.jar --poemprovider.api.url=http://127.0.0.1:8181/po
 
 Test by opening browser to: http://127.0.0.1:8080/poetry
 
-# Creating/Pushing/Running/Stopping the docker image/container 
-## start poetbio and poemprovider docker container
+# Running the docker image/container 
+start poetbio and poemprovider docker container
 ## Update poetrywebapp docker deployment
 find IP for those 2 container with:
 ``` 

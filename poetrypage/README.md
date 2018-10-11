@@ -1,6 +1,6 @@
 # Run locally
 1. python3 poetrypage.py 9090  http://172.17.0.3:8080 http://172.17.0.2:8888
-2. python3 poetrypage.py 9090 http://127.0.0.1:8080
+2. python3 poetrypage.py 9090 http://127.0.0.1:8080 http://127.0.0.1:8888
 
 Test by opening browser to: localhost:9090/poetrypage?u=normal#
 

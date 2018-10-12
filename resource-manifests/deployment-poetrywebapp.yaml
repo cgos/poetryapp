@@ -19,5 +19,10 @@ spec:
         - image: cgos/poetrywebapp
           imagePullPolicy: Always
           name: poetrywebapp
+          env: 
+            - name: POEMPROVIDER_API_URL
+              value: "http://poemprovier"
+            - name: POETBIO_API_URL
+              value: "http://poetbio"
           ports:
             - containerPort: 8080

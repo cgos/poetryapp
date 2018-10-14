@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: poem
+          uri: "http://localhost:8181"
+          predicates:
+          - Path=/poem
+        - id: bio
+          uri: "http://localhost:8888"
+          predicates:
+          - Path=/poetbio
+        - id: poetry
+          uri: "http://localhost:8080"
+          predicates:
+          - Path=/poetry
